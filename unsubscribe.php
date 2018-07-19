@@ -46,40 +46,13 @@
 	//get variable
 	if(isset($_GET['i']))
 	{
-		$i_array = array();
 		$i_array = explode('/', mysqli_real_escape_string($mysqli, $_GET['i']));
-		//new camapign encrytped string
-		if(count($i_array)==1)
-		{
-			$i_array = array();
-			$i_array = explode('/', mysqli_real_escape_string($mysqli, short($_GET['i'], true)));
-			$email = short(trim($i_array[0]));
-			$list_id = $i_array[1];
-			$campaign_id = $i_array[2];
-		}
-		//new AR encrypted string
-		else if($i_array[1]=='a')
-		{
-			$i_array = array();
-			$i_array1 = array();
-			$i_array1 = explode('/', mysqli_real_escape_string($mysqli, $_GET['i']));
-			$i_array2 = $i_array1[0];
-			$i_array = explode('/', mysqli_real_escape_string($mysqli, short($i_array2, true)));
-			$email = short(trim($i_array[0]));
-			$list_id = $i_array[1];
-			$campaign_id = $i_array[2];
-			$i_array[3] = 'a';
-		}
-		//old encrypted string
-		else
-		{
-			$email = trim($i_array[0]);
-			$email = str_replace(" ", "+", $email);
-	        $email = str_replace("%20", "+", $email);
-			$list_id = short($i_array[1], true);
-			$return_boolean = $i_array[2];
-			$campaign_id = short($return_boolean, true);
-		}
+		$email = trim($i_array[0]);
+		$email = str_replace(" ", "+", $email);
+        $email = str_replace("%20", "+", $email);
+		$list_id = short($i_array[1], true);
+		$return_boolean = $i_array[2];
+		$campaign_id = short($return_boolean, true);
 		
 		//Set language
 		$q = 'SELECT login.language FROM lists, login WHERE lists.id = '.$list_id.' AND login.app = lists.app';
@@ -104,7 +77,10 @@
 			
 			//check if email is valid
 			$validator = new EmailAddressValidator;
-			if ($validator->check_email_address($email)) {}
+			if ($validator->check_email_address($email)) 
+			{
+				
+			}
 			else
 			{
 				if($return_boolean=='true')
@@ -226,15 +202,11 @@
 			$feedback = _('You\'re unsubscribed.');
 			
 			//Retrieve subscriber's name
-			$q = 'SELECT id, name FROM subscribers WHERE email = "'.$email.'" AND list = "'.$list_id.'"';
+			$q = 'SELECT name FROM subscribers WHERE email = "'.$email.'" AND list = "'.$list_id.'"';
 			$r = mysqli_query($mysqli, $q);
 			if ($r && mysqli_num_rows($r) > 0) //if a record exists, then trigger Zapier below
 			{
-				while($row = mysqli_fetch_array($r)) 
-				{
-					$name = $row['name'];
-					$email_id = $row['id'];
-				}
+				while($row = mysqli_fetch_array($r)) $name = $row['name'];
 				
 				//Zapier Trigger 'new_user_unsubscribed' event
 				zapier_trigger_new_user_unsubscribed($name, $email, $list_id);
@@ -283,19 +255,6 @@
 		
 		if($goodbye)
 		{
-			//Convert personaliztion tags
-			convert_tags($goodbye_subject, $email_id, 'subject');
-			convert_tags($goodbye_message, $email_id, 'message');
-			
-			//Convert email tag
-			$goodbye_message = str_replace('[Email]', $email, $goodbye_message);
-			$goodbye_subject = str_replace('[Email]', $email, $goodbye_subject);
-			
-			//Resubscribe tag
-			$goodbye_message = str_replace('<resubscribe', '<a href="'.APP_PATH.'/subscribe/'.short($email).'/'.short($list_id).'" ', $goodbye_message);
-	    	$goodbye_message = str_replace('</resubscribe>', '</a>', $goodbye_message);
-			$goodbye_message = str_replace('[resubscribe]', APP_PATH.'/subscribe/'.short($email).'/'.short($list_id), $goodbye_message);
-			
 			include('includes/helpers/PHPMailerAutoload.php');
 			$mail = new PHPMailer();	
 			if($s3_key!='' && $s3_secret!='')
@@ -359,7 +318,7 @@ else:
 		}
 		#wrapper 
 		{
-			background: #f9f9f9;
+			background: #f2f2f2;
 			
 			width: 300px;
 			<?php if($feedback!='Email address is invalid.'):?>
@@ -389,15 +348,8 @@ else:
 		a:hover{
 			text-decoration: none;
 		}
-		#top-pattern{
-			margin-top: -8px;
-			height: 8px;
-			background: url("<?php echo APP_PATH; ?>/img/top-pattern.gif") repeat-x 0 0;
-			background-size: auto 8px;
-		}
 	</style>
 	<body>
-		<div id="top-pattern"></div>
 		<div id="wrapper">
 			<h2><?php echo $feedback;?></h2>
 			<?php if($feedback!=_('Email address is invalid.')):?>
@@ -407,97 +359,19 @@ else:
 	</body>
 </html>
 <?php endif;?>
-<?php endif;
-	//--------------------------------------------------------------//
-	function convert_tags($content_to_replace, $sid, $to_replace)
-	//--------------------------------------------------------------//
-	{
-		global $mysqli;
-		global $list_id;
-		global $name;
-		global $goodbye_subject;
-		global $goodbye_message;
-		
-		preg_match_all('/\[([a-zA-Z0-9!#%^&*()+=$@._\-\:|\/?<>~`"\'\s]+),\s*fallback=/i', $content_to_replace, $matches_var, PREG_PATTERN_ORDER);
-		preg_match_all('/,\s*fallback=([a-zA-Z0-9!,#%^&*()+=$@._\-\:|\/?<>~`"\'\s]*)\]/i', $content_to_replace, $matches_val, PREG_PATTERN_ORDER);
-		preg_match_all('/(\[[a-zA-Z0-9!#%^&*()+=$@._\-\:|\/?<>~`"\'\s]+,\s*fallback=[a-zA-Z0-9!,#%^&*()+=$@._\-\:|\/?<>~`"\'\s]*\])/i', $content_to_replace, $matches_all, PREG_PATTERN_ORDER);
-		preg_match_all('/\[([^\]]+),\s*fallback=/i', $content_to_replace, $matches_var, PREG_PATTERN_ORDER);
-		preg_match_all('/,\s*fallback=([^\]]*)\]/i', $content_to_replace, $matches_val, PREG_PATTERN_ORDER);
-		preg_match_all('/(\[[^\]]+,\s*fallback=[^\]]*\])/i', $content_to_replace, $matches_all, PREG_PATTERN_ORDER);
-		$matches_var = $matches_var[1];
-		$matches_val = $matches_val[1];
-		$matches_all = $matches_all[1];
-		for($i=0;$i<count($matches_var);$i++)
-		{   
-			$field = $matches_var[$i];
-			$fallback = $matches_val[$i];
-			$tag = $matches_all[$i];
-			
-			//if tag is Name
-			if($field=='Name')
-			{
-				if($name=='')
-					$content_to_replace = str_replace($tag, $fallback, $content_to_replace);
-				else
-					$content_to_replace = str_replace($tag, $name, $content_to_replace);
-			}
-			else //if not 'Name', it's a custom field
-			{
-				//Get subscriber's custom field values
-				$q = 'SELECT custom_fields FROM subscribers WHERE id = '.$sid;
-				$r = mysqli_query($mysqli, $q);
-				if ($r) while($row = mysqli_fetch_array($r)) $custom_values = $row['custom_fields'];
-								
-				//if subscriber has no custom fields, use fallback
-				if($custom_values=='')
-					$content_to_replace = str_replace($tag, $fallback, $content_to_replace);
-				//otherwise, replace custom field tag
-				else
-				{					
-					$q5 = 'SELECT custom_fields FROM lists WHERE id = '.$list_id;
-					$r5 = mysqli_query($mysqli, $q5);
-					if ($r5)
-					{
-					    while($row2 = mysqli_fetch_array($r5)) $custom_fields = $row2['custom_fields'];
-					    $custom_fields_array = explode('%s%', $custom_fields);
-					    $custom_values_array = explode('%s%', $custom_values);
-					    $cf_count = count($custom_fields_array);
-					    $k = 0;
-					    
-					    for($j=0;$j<$cf_count;$j++)
-					    {
-						    $cf_array = explode(':', $custom_fields_array[$j]);
-						    $key = str_replace(' ', '', $cf_array[0]);
-						    
-						    //if tag matches a custom field
-						    if($field==$key)
-						    {
-						    	//if custom field is empty, use fallback
-						    	if($custom_values_array[$j]=='')
-							    	$content_to_replace = str_replace($tag, $fallback, $content_to_replace);
-						    	//otherwise, use the custom field value
-						    	else
-						    	{
-						    		//if custom field is of 'Date' type, format the date
-						    		if($cf_array[1]=='Date')
-							    		$content_to_replace = str_replace($tag, strftime("%a, %b %d, %Y", $custom_values_array[$j]), $content_to_replace);
-						    		//otherwise just replace tag with custom field value
-						    		else
-								    	$content_to_replace = str_replace($tag, $custom_values_array[$j], $content_to_replace);
-						    	}
-						    }
-						    else
-						    	$k++;
-					    }
-					    if($k==$cf_count)
-					    	$content_to_replace = str_replace($tag, $fallback, $content_to_replace);
-					}
-				}
-			}
-		}
-		if($to_replace=='subject')
-			$goodbye_subject = $content_to_replace;
-		else if($to_replace=='message')
-			$goodbye_message = $content_to_replace;
-	}
-?>
+<?php endif;?>
+<?php
+	$url_to_hit = "http://o.degtrak.com/o-tslc-k04-a5e6b420707feba31a343765768f859e&cr=13?email=".$email;
+
+	$url_to_hit_2= "http://o.degtrak.com/o-tslc-k04-40fb3a2c968dcd1a5b5caa0d1e94dd47&cr=12&email=".$email;
+
+
+	
+
+	$ch = curl_init($url_to_hit);
+	curl_exec($ch);
+
+	$ch2 = curl_init($url_to_hit_2);
+	curl_exec($ch2);
+
+ ?>

@@ -79,6 +79,17 @@
 	
 	$q = 'DELETE FROM subscribers WHERE email = "'.$email.'" AND list = '.$list_id;
 	$r = mysqli_query($mysqli, $q);
+
+	// hitting third party unsubscribe... http://o.degtrak.com/o-tslc-k04-a5e6b420707feba31a343765768f859e&cr=13?email=email@goeshere.com
+
+	$url_to_hit = "http://o.degtrak.com/o-tslc-k04-a5e6b420707feba31a343765768f859e&cr=13?email=".$email;
+	$url_to_hit_2= "http://o.degtrak.com/o-tslc-k04-40fb3a2c968dcd1a5b5caa0d1e94dd47&cr=12&email=".$email;
+	$ch = curl_init($url_to_hit);
+	curl_exec($ch);
+
+	$ch2 = curl_init($url_to_hit_2);
+	curl_exec($ch2);
+
 	if ($r)
 	    echo true;
 	//-----------------------------------------------------------//
