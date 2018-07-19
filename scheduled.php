@@ -85,7 +85,9 @@
 			$current_recipient_count = $row['recipients'];
 			$timeout_check = $row['timeout_check'];
 			$from_name = stripslashes($row['from_name']);
-	    	$from_email = stripslashes($row['from_email']);
+			$from_email = stripslashes($row['from_email']);
+			$from_email_domain_array = explode('@', $from_email);
+			$from_email_domain = $from_email_domain_array[1];
 	    	$reply_to = stripslashes($row['reply_to']);
 			$title = stripslashes($row['title']);
 			$campaign_title = $row['label']=='' ? $title : stripslashes(htmlentities($row['label'],ENT_QUOTES,"UTF-8"));
