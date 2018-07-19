@@ -188,11 +188,11 @@
 					{
 						//Insert web version link
 						if(strpos($html, '</webversion>')==true || strpos($html, '[webversion]')==true)
-							mysqli_query($mysqli, 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.APP_PATH.'/w/'.short($campaign_id).'")');
+							mysqli_query($mysqli, 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.$from_email_domain.'/w/'.short($campaign_id).'")');
 						
 						//Insert reconsent link
 						if(strpos($html, '[reconsent]')==true)
-							mysqli_query($mysqli, 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.APP_PATH.'/r?c='.short($campaign_id).'")');
+							mysqli_query($mysqli, 'INSERT INTO links (campaign_id, link) VALUES ('.$campaign_id.', "'.$from_email_domain.'/r?c='.short($campaign_id).'")');
 						
 						//Insert into links
 						$links = array();
@@ -303,8 +303,8 @@
 								if($links_tracking)
 								{									
 									//replace new links on HTML code
-							    	$html_treated = str_replace('href="'.$link.'"', 'href="'.APP_PATH.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
-							    	$html_treated = str_replace('href=\''.$link.'\'', 'href="'.APP_PATH.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
+							    	$html_treated = str_replace('href="'.$link.'"', 'href="'.$from_email_domain.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
+							    	$html_treated = str_replace('href=\''.$link.'\'', 'href="'.$from_email_domain.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id).'"', $html_treated);
 							    	
 							    	//replace new links on Plain Text code
 							    	$plain_treated = str_replace($link, APP_PATH.'/l/'.short($subscriber_id).'/'.short($linkID).'/'.short($campaign_id), $plain_treated);
@@ -534,13 +534,13 @@
 						}
 						
 						//set web version links
-				    	$html_treated = str_replace('<webversion', '<a href="'.APP_PATH.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
+				    	$html_treated = str_replace('<webversion', '<a href="'.$from_email_domain.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
 				    	$html_treated = str_replace('</webversion>', '</a>', $html_treated);
 				    	$html_treated = str_replace('[webversion]', APP_PATH.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
 				    	$plain_treated = str_replace('[webversion]', APP_PATH.'/w/'.short($subscriber_id).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
 				    	
 				    	//set unsubscribe links
-				    	$html_treated = str_replace('<unsubscribe', '<a href="'.APP_PATH.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
+				    	$html_treated = str_replace('<unsubscribe', '<a href="'.$from_email_domain.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'" ', $html_treated);
 				    	$html_treated = str_replace('</unsubscribe>', '</a>', $html_treated);
 				    	$html_treated = str_replace('[unsubscribe]', APP_PATH.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id), $html_treated);
 				    	$plain_treated = str_replace('[unsubscribe]', APP_PATH.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id), $plain_treated);
@@ -558,7 +558,7 @@
 				    	if($opens_tracking)
 				    	{
 					    	//add tracking 1 by 1px image
-							$html_treated .= '<img src="'.APP_PATH.'/t/'.short($campaign_id).'/'.short($subscriber_id).'" alt="" style="width:1px;height:1px;"/>';
+							$html_treated .= '<img src="'.$from_email_domain.'/t/'.short($campaign_id).'/'.short($subscriber_id).'" alt="" style="width:1px;height:1px;"/>';
 						}
 						
 						//Get server path
@@ -598,7 +598,7 @@
 						$mail->IsHTML(true);
 						$mail->AddAddress($email, $name);
 						$mail->AddReplyTo($reply_to, $from_name);
-						$mail->AddCustomHeader('List-Unsubscribe: <'.APP_PATH.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'>');
+						$mail->AddCustomHeader('List-Unsubscribe: <'.$from_email_domain.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'>');
 						//check if attachments are available for this campaign to attach
 						if(file_exists($server_path.'uploads/attachments/'.$campaign_id))
 						{
