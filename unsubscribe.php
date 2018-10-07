@@ -310,6 +310,19 @@ else:
 		<meta name="viewport" content="width=device-width, initial-scale=1">
 		<link rel="Shortcut Icon" type="image/ico" href="<?php echo APP_PATH;?>/img/favicon.png">
 		<title><?php echo _('Unsubscribed');?></title>
+
+		<!-- Start Visual Website Optimizer Asynchronous Code -->
+		<script type='text/javascript'>
+		var _vwo_code=(function(){
+		var account_id=364644,
+		settings_tolerance=2000,
+		library_tolerance=2500,
+		use_existing_jquery=false,
+		/* DO NOT EDIT BELOW THIS LINE */
+		f=false,d=document;return{use_existing_jquery:function(){return use_existing_jquery;},library_tolerance:function(){return library_tolerance;},finish:function(){if(!f){f=true;var a=d.getElementById('_vis_opt_path_hides');if(a)a.parentNode.removeChild(a);}},finished:function(){return f;},load:function(a){var b=d.createElement('script');b.src=a;b.type='text/javascript';b.innerText;b.onerror=function(){_vwo_code.finish();};d.getElementsByTagName('head')[0].appendChild(b);},init:function(){settings_timer=setTimeout('_vwo_code.finish()',settings_tolerance);var a=d.createElement('style'),b='body{opacity:0 !important;filter:alpha(opacity=0) !important;background:none !important;}',h=d.getElementsByTagName('head')[0];a.setAttribute('id','_vis_opt_path_hides');a.setAttribute('type','text/css');if(a.styleSheet)a.styleSheet.cssText=b;else a.appendChild(d.createTextNode(b));h.appendChild(a);this.load('//dev.visualwebsiteoptimizer.com/j.php?a='+account_id+'&u='+encodeURIComponent(d.URL)+'&r='+Math.random());return settings_timer;}};}());_vwo_settings_timer=_vwo_code.init();
+		</script>
+		<!-- End Visual Website Optimizer Asynchronous Code -->
+		
 	</head>
 	<style type="text/css">
 		body{
@@ -350,28 +363,29 @@ else:
 		}
 	</style>
 	<body>
-		<div id="wrapper">
-			<h2><?php echo $feedback;?></h2>
-			<?php if($feedback!=_('Email address is invalid.')):?>
-				<p><a href="<?php echo APP_PATH; ?>/subscribe/<?php echo short($email);?>/<?php echo short($list_id);?>" title=""><?php echo _('Re-subscribe?');?></a></p>
-			<?php endif;?>
+		<div class="cta"><h1>Thank You! You have been unsubscribed successfully.</h1> <p>As per your request, you have been unsubscribed from all emails from our
+		marketing partners.</p><p>Before you go, you maybe interested in the offer below.
+	
+		</div>
+		<div class="ad">
+		<h1 style="text-align: center">See if you qualify for Financial Aid</h1>
+
+		<p>If you are interested in learning about receiving <a href="#">financial <br>
+		paid for college</a>, an admissions representative can connect<br>
+		you with financial services staff to make you aware of such<br> 
+		programs available to you.</p>
+		
+		<p>Financial aid is available to those who qualify.</p>
+		
+		<p>For instance, the Federal Government is issuing Federal <br>
+		Pell Grants up to the amount of <a href="#">$6,095</a> for those who <br>
+		qualify.</p>
+
+		<p><a href="#">CLICK HERE</a> to fill out a form to see the schools who may<br> 
+		be able to assist you with your desire to go to school. <p>The process takes only 
+		2 minutes and is zero cost or obligation.</p>
 		</div>
 	</body>
 </html>
 <?php endif;?>
 <?php endif;?>
-<?php
-	$url_to_hit = "http://o.degtrak.com/o-tslc-k04-a5e6b420707feba31a343765768f859e&cr=13?email=".$email;
-
-	$url_to_hit_2= "http://o.degtrak.com/o-tslc-k04-40fb3a2c968dcd1a5b5caa0d1e94dd47&cr=12&email=".$email;
-
-
-	
-
-	$ch = curl_init($url_to_hit);
-	curl_exec($ch);
-
-	$ch2 = curl_init($url_to_hit_2);
-	curl_exec($ch2);
-
- ?>
