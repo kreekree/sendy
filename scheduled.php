@@ -598,8 +598,8 @@
 						$mail->IsHTML(true);
 						$mail->AddAddress($email, $name);
 						$mail->AddReplyTo($reply_to, $from_name);
-						$mail->AddCustomHeader('List-Unsubscribe: <'.'http://'.$from_email_domain.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'>');
-						$mail->AddCustomHeader('X-SES-CONFIGURATION-SET:Tracking');
+						// $mail->AddCustomHeader('List-Unsubscribe: <'.'http://'.$from_email_domain.'/unsubscribe/'.short($email).'/'.short($subscriber_list).'/'.short($campaign_id).'>');
+						// $mail->AddCustomHeader('X-SES-CONFIGURATION-SET:Tracking');
 						//check if attachments are available for this campaign to attach
 						if(file_exists($server_path.'uploads/attachments/'.$campaign_id))
 						{
