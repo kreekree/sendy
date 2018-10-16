@@ -2211,7 +2211,7 @@ class PHPMailer
         if ($this->XMailer == '') {
             $result .= $this->headerLine(
                 'X-Mailer',
-                'Sendy (https://sendy.co)'
+                ''
             );
         } else {
             $myXmailer = trim($this->XMailer);
